@@ -39,5 +39,5 @@ kubectl get pods -A
 kubectl logs fiap-tc-65bf48c747-jzzl7 -n fiap-tc
 
 
-# meus coiso
+# meu context atual
 aws sts get-caller-identity

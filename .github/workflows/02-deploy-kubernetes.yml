@@ -55,36 +55,33 @@ jobs:
 
       - name: Deploy Kubernetes manifests
         run: |
-          # Deploy em ordem: namespaces -> configmaps -> secrets -> deployments -> services -> ingress
-          
-          if [ -d "k8s/namespaces" ]; then
-            kubectl apply -f k8s/namespaces/ --recursive
-          fi
-          
-          if [ -d "k8s/configmaps" ]; then
-            kubectl apply -f k8s/configmaps/ --recursive
-          fi
-          
-          if [ -d "k8s/secrets" ]; then
-            kubectl apply -f k8s/secrets/ --recursive
-          fi
-          
-          if [ -d "k8s/deployments" ]; then
-            kubectl apply -f k8s/deployments/ --recursive
-          fi
-          
-          if [ -d "k8s/services" ]; then
-            kubectl apply -f k8s/services/ --recursive
-          fi
-          
-          if [ -d "k8s/ingress" ]; then
-            kubectl apply -f k8s/ingress/ --recursive
-          fi
-          
-          # Caso tenha uma pasta kubernetes ao invés de k8s
-          if [ -d "kubernetes" ] && [ ! -d "k8s" ]; then
-            kubectl apply -f kubernetes/ --recursive
-          fi
+            if [ -d "k8s/app/namespaces" ]; then
+                kubectl apply -f k8s/app/namespaces/ --recursive
+            fi
+            
+            if [ -d "k8s/configmap" ]; then
+                kubectl apply -f k8s/configmap/ --recursive
+            fi
+            
+            if [ -d "k8s/secrets" ]; then
+                kubectl apply -f k8s/secrets/ --recursive
+            fi
+            
+            if [ -d "k8s/app/deployments" ]; then
+                kubectl apply -f k8s/app/deployments/ --recursive
+            fi
+            
+            if [ -d "k8s/app/services" ]; then
+                kubectl apply -f k8s/app/services/ --recursive
+            fi
+            
+            if [ -d "k8s/app/hpa" ]; then
+                kubectl apply -f k8s/app/hpa/ --recursive
+            fi
+
+            if [ -d "k8s/jobs/db-migrations" ]; then
+                kubectl apply -f k8s/jobs/db-migrations/ --recursive
+            fi
 
       - name: Verify deployment
         run: |
