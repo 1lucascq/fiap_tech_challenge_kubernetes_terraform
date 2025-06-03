@@ -1,0 +1,46 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches: [main]
+    paths: ['kubernetes/**']
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag to deploy'
+        required: true
+        default: 'latest'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --name fiap-tech-challenge-eks --region us-east-1
+
+      - name: Create secrets
+        run: |
+          kubectl create secret generic fiap-app-secrets \
+            --from-literal=DATABASE_URL='${{ secrets.DATABASE_URL }}' \
+            --namespace=fiap-tech-challenge \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy to Kubernetes
+        run: |
+          # Substitui a imagem no deployment
+          sed -i 's|your-registry/fiap-tech-challenge:latest|${{ secrets.DOCKER_REGISTRY }}/fiap-tech-challenge:${{ github.event.inputs.image_tag || 'latest' }}|g' kubernetes/deployment.yaml
+          
+          # Aplica os manifestos
+          kubectl apply -f kubernetes/

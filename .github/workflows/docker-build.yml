@@ -1,0 +1,81 @@
+name: Deploy to EKS from Docker Hub
+
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'terraform/**'
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: fiap-tc
+  DOCKER_USERNAME: lucascq # Your DockerHub username
+  DEPLOY_IMAGE_TAG: latest # Specify the tag to deploy, e.g., latest or a version
+  AWS_REGION_VALUE: us-east-1
+  KUBE_NAMESPACE: fiap-tc
+  EKS_CLUSTER_NAME: fiap-tc # Added EKS_CLUSTER_NAME for clarity
+
+jobs:
+  test: # Test job remains the same
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify your Node.js version
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Run lint
+        run: npm run lint
+
+  deploy:
+    needs: [test] # Now depends only on the test job
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions: # Added permissions for AWS OIDC if you choose to use it later
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4 # Using a more recent version
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION_VALUE }}
+          # role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_GITHUB_ACTIONS_ROLE # Optional: For OIDC
+          # role-session-name: GitHubActionsSession
+
+      - name: Set up Kubectl # Keep this to allow Terraform to interact with EKS
+        run: |
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION_VALUE }}
+          kubectl version --short --client
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.0" # Specify your desired Terraform version
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="app_image_tag=${{ env.DEPLOY_IMAGE_TAG }}"
+        working-directory: ./terraform
+
+      - name: Verify deployment rollout
+        run: kubectl rollout status deployment/fiap-tc-app -n ${{ env.KUBE_NAMESPACE }} --timeout=5m

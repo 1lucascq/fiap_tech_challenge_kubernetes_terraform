@@ -5,6 +5,6 @@ metadata:
 data:
   NODE_ENV: "production"
   AWS_ENDPOINT: "http://localstack:4566"
-  POSTGRES_HOST: "postgres-service"
+  POSTGRES_HOST: "tc-fiap-postgres.comilucshvgd.us-east-1.rds.amazonaws.com"
   POSTGRES_PORT: "5432"
-  POSTGRES_DB: "fiap_tc1_db"
+  POSTGRES_DB: "fiap_tc_db"
