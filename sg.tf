@@ -1,7 +1,7 @@
 resource "aws_security_group" "sg" {
   name        = "SG-${var.projectName}"
   description = "Usado no EKS para o TC fase 3"
-  vpc_id      = ""
+  vpc_id      = "vpc-092b225a2e861b0ce"
 
   # Inbound
   ingress {
@@ -24,5 +24,5 @@ resource "aws_security_group" "sg" {
 
 import {
     to = aws_security_group.sg
-    id = "sg-03f836b2047886ae0"
+    id = "sg-06776178eaae9199c"
 }
