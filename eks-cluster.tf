@@ -14,5 +14,5 @@ resource "aws_eks_cluster" "eks-cluster" {
 
 import {
   to = aws_eks_cluster.eks-cluster
-  id = "arn:aws:eks:us-east-1:062491649647:cluster/tc-fiap"
+  id = "tc-fiap"
 }
