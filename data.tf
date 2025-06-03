@@ -13,3 +13,8 @@ data "aws_subnet" "subnet" {
   for_each = toset(data.aws_subnets.subnets.ids)
   id       = each.value
 }
+
+data "aws_security_group" "sg" {
+  name = "SG-${var.projectName}"
+  vpc_id = "vpc-092b225a2e861b0ce"
+}
