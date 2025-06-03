@@ -1,5 +1,5 @@
 resource "aws_security_group" "sg" {
-  name        = "SG-${var.projectName}"
+  name        = "SG-tc-fiap"
   description = "Usado no EKS para o TC fase 3"
   vpc_id      = "vpc-092b225a2e861b0ce"
 

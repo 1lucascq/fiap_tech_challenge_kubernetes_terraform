@@ -1,5 +1,5 @@
 resource "aws_eks_cluster" "eks-cluster" {
-  name     = "tc-fiap"
+  name     = var.projectName
   role_arn = var.labRole
 
   vpc_config {
