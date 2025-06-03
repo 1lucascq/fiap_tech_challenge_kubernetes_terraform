@@ -4,3 +4,8 @@ resource "aws_eks_access_entry" "eks-access-entry" {
   kubernetes_groups = ["fiap"]
   type              = "STANDARD"
 }
+
+import {
+  to = aws_eks_access_entry.eks-access-entry
+  id = "tc-fiap:arn:aws:iam::062491649647:role/voclabs"
+}

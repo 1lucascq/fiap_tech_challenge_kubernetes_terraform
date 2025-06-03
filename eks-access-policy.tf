@@ -7,3 +7,8 @@ resource "aws_eks_access_policy_association" "eks-access-policy" {
     type = "cluster"
   }
 }
+
+import {
+  to = aws_eks_access_policy_association.eks-access-policy
+  id = "tc-fiap#arn:aws:iam::062491649647:role/voclabs#arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+}
