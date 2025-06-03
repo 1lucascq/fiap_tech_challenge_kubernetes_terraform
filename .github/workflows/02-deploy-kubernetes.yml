@@ -2,7 +2,7 @@ name: Deploy to Kubernetes
 
 on:
   workflow_run:
-    workflows: ["Terraform Infrastructure"]
+    workflows: ["Terraform | Create Infra AWS"]  # Corrigir nome do workflow
     types:
       - completed
     branches:
@@ -37,17 +37,17 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.REGION_DEFAULT }}
 
-      - name: Setup Terraform (to get outputs)
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.0
+    #   - name: Setup Terraform (to get outputs)
+    #     uses: hashicorp/setup-terraform@v3
+    #     with:
+    #       terraform_version: 1.5.0
 
-      - name: Get EKS cluster info
-        working-directory: ./terraform
-        run: |
-          terraform init
-          echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
-          echo "CLUSTER_ENDPOINT=$(terraform output -raw cluster_endpoint)" >> $GITHUB_ENV
+    #   - name: Get EKS cluster info
+    #     working-directory: ./terraform
+    #     run: |
+    #       terraform init
+    #       echo "CLUSTER_NAME=$(terraform output -raw cluster_name)" >> $GITHUB_ENV
+    #       echo "CLUSTER_ENDPOINT=$(terraform output -raw cluster_endpoint)" >> $GITHUB_ENV
 
       - name: Configure kubectl
         run: |
