@@ -16,3 +16,8 @@ resource "aws_eks_node_group" "eks-node" {
     max_unavailable = 1
   }
 }
+
+import {
+  to = aws_eks_node_group.eks-node
+  id = "tc-fiap:tc-fiap-1d659-4d01-7009-b9f6-460a43f0a477"
+}
