@@ -28,6 +28,11 @@ jobs:
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v3
 
+      - name: Terraform Fix
+        id: fix
+        run: terraform state rm aws_eks_node_group.eks-node && terraform import aws_eks_node_group.eks-node tc-fiap:fiap
+        continue-on-error: true
+
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
