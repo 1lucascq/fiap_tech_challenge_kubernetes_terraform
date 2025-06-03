@@ -1,4 +1,4 @@
-name: Create Infra AWS
+name: Terraform | Create Infra AWS
 
 on:
   pull_request:
