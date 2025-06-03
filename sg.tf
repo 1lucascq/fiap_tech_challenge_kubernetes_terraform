@@ -23,6 +23,6 @@ resource "aws_security_group" "sg" {
 }
 
 import {
-    to = aws_security_group.sg.id
+    to = aws_security_group.sg
     id = "sg-03f836b2047886ae0"
 }
