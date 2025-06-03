@@ -9,8 +9,12 @@ resource "aws_eks_cluster" "eks-cluster" {
 
   access_config {
     authentication_mode = var.accessConfig
+    bootstrap_cluster_creator_admin_permissions = true
   }
+
+  bootstrap_self_managed_addons = false
 }
+
 
 import {
   to = aws_eks_cluster.eks-cluster
