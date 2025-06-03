@@ -2,7 +2,7 @@ name: Deploy to Kubernetes
 
 on:
   workflow_run:
-    workflows: ["Terraform | Create Infra AWS"]  # Corrigir nome do workflow
+    workflows: ["Terraform | Create Infra AWS"]
     types:
       - completed
     branches:
@@ -12,7 +12,11 @@ on:
       - master
     paths:
       - 'k8s/**'
-      - 'kubernetes/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'k8s/**'
   workflow_dispatch:
 
 env:
